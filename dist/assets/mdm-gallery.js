@@ -9,20 +9,21 @@
   };
 
   fetch('/.netlify/functions/mdm-gallery?limit=12')
-    .then((response) => {
-      if (!response.ok) throw new Error('Gallery request failed');
-      return response.json();
+    .then(async (response) => {
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.error || 'Gallery request failed');
+      return payload;
     })
     .then((payload) => {
-      const items = Array.isArray(payload) ? payload : (payload.items || payload.media || payload.photos || payload.data || []);
-      const validItems = items.filter((item) => item && (item.image_url || item.imageUrl || item.url || item.media_url));
+      const items = findItems(payload);
+      const validItems = items.filter((item) => item && getImageUrl(item));
       if (!validItems.length) {
         showStatus('New approved projects will appear here soon.');
         return;
       }
       status.hidden = true;
       validItems.slice(0, 12).forEach((item) => {
-        const imageUrl = item.image_url || item.imageUrl || item.media_url || item.url;
+        const imageUrl = getImageUrl(item);
         const sourceUrl = item.source_url || item.sourceUrl || item.permalink || imageUrl;
         const title = item.caption || item.title || item.category || 'MDM Creation project';
         const figure = document.createElement('figure');
@@ -41,7 +42,31 @@
         grid.appendChild(galleryItem);
       });
     })
-    .catch(() => showStatus('The project gallery is temporarily unavailable.'));
+    .catch((error) => {
+      console.error('MDM project gallery:', error);
+      showStatus('The project gallery is not available yet. Please check the MDM TapCard connection.');
+    });
+
+  function findItems(payload) {
+    if (Array.isArray(payload)) return payload;
+    const candidates = [
+      payload?.items,
+      payload?.media,
+      payload?.photos,
+      payload?.gallery,
+      payload?.results,
+      payload?.data,
+      payload?.data?.items,
+      payload?.data?.media,
+      payload?.data?.photos,
+      payload?.data?.gallery
+    ];
+    return candidates.find(Array.isArray) || [];
+  }
+
+  function getImageUrl(item) {
+    return item.image_url || item.imageUrl || item.media_url || item.mediaUrl || item.thumbnail_url || item.thumbnailUrl || item.image?.url || item.media?.url || item.url;
+  }
 
   function escapeHtml(value) { return String(value).replace(/[&<>"']/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char])); }
   function escapeAttribute(value) { return escapeHtml(value); }

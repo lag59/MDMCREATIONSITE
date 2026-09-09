@@ -36,19 +36,23 @@ exports.handler = async (event) => {
       data = { error: 'The gallery API returned an invalid response.' };
     }
 
-    return response(upstream.status, data);
+    if (!upstream.ok) {
+      return response(upstream.status, { error: 'The MDM TapCard gallery could not be loaded.' }, true);
+    }
+
+    return response(200, data);
   } catch (error) {
     console.error('MDM gallery request failed:', error);
     return response(502, { error: 'Unable to load the gallery right now.' });
   }
 };
 
-function response(statusCode, body) {
+function response(statusCode, body, isError = false) {
   return {
     statusCode,
     headers: {
       'Content-Type': 'application/json',
-      'Cache-Control': 'public, max-age=60, stale-while-revalidate=300'
+      'Cache-Control': isError ? 'no-store' : 'public, max-age=60, stale-while-revalidate=300'
     },
     body: JSON.stringify(body)
   };
