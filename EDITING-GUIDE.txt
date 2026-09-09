@@ -13,6 +13,16 @@ Language toggle:
 - Example: <span data-en>Services</span><span data-es>Servicios</span>
 - The page title, image text, and footer details are intentionally not translated.
 
+Service pages:
+- Each service card on the homepage links to its own page inside "dist/services".
+- dist/services/branding.html — Branding & Logo Design
+- dist/services/websites.html — Website Design
+- dist/services/tapcard.html — MDM TapCard
+- dist/services/merchandise.html — Custom Merchandise
+- dist/services/marketing.html — Marketing Design
+- dist/services/support.html — Business Support
+- dist/services/service.css and service.js are shared by all service pages.
+
 Main files:
 - dist/index.html — page content, styling, and interactions
 - dist/assets/mdm-logo.png — MDM Creation logo
