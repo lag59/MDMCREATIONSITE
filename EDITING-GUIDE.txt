@@ -1,0 +1,24 @@
+MDM CREATION WEBSITE — EDITING GUIDE
+
+1. Open the "dist" folder in Visual Studio Code.
+2. Open "index.html" to edit the website.
+3. Text, prices, links, colors, layout, and bilingual content are all contained in index.html.
+4. Replace images inside "dist/assets" while keeping the same filenames, or update the image filenames in index.html.
+5. Double-click index.html to preview the website in your browser.
+6. To publish on Netlify, upload the complete "dist" folder.
+
+Language toggle:
+- Only text wrapped in both data-en and data-es spans changes when the ES/EN button is clicked.
+- Keep shared content such as brand names, prices, package names, and domain names outside those spans so it stays the same in both languages.
+- Example: <span data-en>Services</span><span data-es>Servicios</span>
+- The page title, image text, and footer details are intentionally not translated.
+
+Main files:
+- dist/index.html — page content, styling, and interactions
+- dist/assets/mdm-logo.png — MDM Creation logo
+- dist/assets/mdm-services.png — services overview image
+
+
+
+Domain intended for the final public site:
+mdmcreation.com
