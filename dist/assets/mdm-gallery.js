@@ -3,10 +3,53 @@
   const status = document.querySelector('[data-gallery-status]');
   if (!grid || !status) return;
 
+  const fallbackItems = [
+    { image_url: 'assets/MDM Creation luxury branding flat lay.png', title: 'Luxury Branding Flat Lay' },
+    { image_url: 'assets/BRANDING.png', title: 'Branding & Design' },
+    { image_url: 'assets/Elegant Multi-Device Web Design Workspace.png', title: 'Web Design Workspace' },
+    { image_url: 'assets/Luxury Social Media Planning Workspace.png', title: 'Social Media Planning' },
+    { image_url: 'assets/Luxury NFC business collection with digital profile.png', title: 'NFC Business Cards' },
+    { image_url: 'assets/bussiness support Management.png', title: 'Business Support' },
+    { image_url: 'assets/MDMPROCESS.png', title: 'MDM Process' }
+  ];
+
   const showStatus = (message) => {
     status.textContent = message;
     status.hidden = false;
   };
+
+  const renderItems = (items) => {
+    const validItems = items.filter((item) => item && getImageUrl(item));
+    if (!validItems.length) {
+      showStatus('New approved projects will appear here soon.');
+      return;
+    }
+    status.hidden = true;
+    validItems.slice(0, 12).forEach((item) => {
+      const imageUrl = getImageUrl(item);
+      const sourceUrl = item.source_url || item.sourceUrl || item.permalink || imageUrl;
+      const title = item.caption || item.title || item.category || 'MDM Creation project';
+      const figure = document.createElement('figure');
+      figure.className = 'gallery-item';
+      figure.innerHTML = `<img src="${escapeAttribute(imageUrl)}" alt="${escapeAttribute(title)}" loading="lazy"><figcaption>${escapeHtml(title)}</figcaption>`;
+      let galleryItem = figure;
+      if (sourceUrl) {
+        const link = document.createElement('a');
+        link.href = sourceUrl;
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.className = 'gallery-item';
+        link.append(...figure.childNodes);
+        galleryItem = link;
+      }
+      grid.appendChild(galleryItem);
+    });
+  };
+
+  if (location.protocol === 'file:') {
+    renderItems(fallbackItems);
+    return;
+  }
 
   fetch('/.netlify/functions/mdm-gallery?limit=12')
     .then(async (response) => {
@@ -16,35 +59,15 @@
     })
     .then((payload) => {
       const items = findItems(payload);
-      const validItems = items.filter((item) => item && getImageUrl(item));
-      if (!validItems.length) {
-        showStatus('New approved projects will appear here soon.');
+      if (!items.length) {
+        renderItems(fallbackItems);
         return;
       }
-      status.hidden = true;
-      validItems.slice(0, 12).forEach((item) => {
-        const imageUrl = getImageUrl(item);
-        const sourceUrl = item.source_url || item.sourceUrl || item.permalink || imageUrl;
-        const title = item.caption || item.title || item.category || 'MDM Creation project';
-        const figure = document.createElement('figure');
-        figure.className = 'gallery-item';
-        figure.innerHTML = `<img src="${escapeAttribute(imageUrl)}" alt="${escapeAttribute(title)}" loading="lazy"><figcaption>${escapeHtml(title)}</figcaption>`;
-        let galleryItem = figure;
-        if (sourceUrl) {
-          const link = document.createElement('a');
-          link.href = sourceUrl;
-          link.target = '_blank';
-          link.rel = 'noopener';
-          link.className = 'gallery-item';
-          link.append(...figure.childNodes);
-          galleryItem = link;
-        }
-        grid.appendChild(galleryItem);
-      });
+      renderItems(items);
     })
     .catch((error) => {
-      console.error('MDM project gallery:', error);
-      showStatus('The project gallery is not available yet. Please check the MDM TapCard connection.');
+      console.warn('MDM project gallery fallback engaged:', error);
+      renderItems(fallbackItems);
     });
 
   function findItems(payload) {
