@@ -23,6 +23,14 @@ Service pages:
 - dist/services/support.html — Business Support
 - dist/services/service.css and service.js are shared by all service pages.
 
+Automatic project gallery:
+- The homepage loads approved MDM TapCard AutoGallery photos in the "Our Projects" section.
+- Keep MDM_API_KEY only in Netlify environment variables; never put it in frontend JavaScript.
+- Copy the values from `.env.example` into Netlify Site configuration → Environment variables.
+- Set MDM_BUSINESS_SLUG to the slug shown in MDM TapCard → Admin → Website Feed.
+- Approve photos in MDM TapCard → Admin → AutoGallery; approved photos then appear through the Netlify Function.
+- `netlify/functions/mdm-gallery.js` securely proxies the API request, and `netlify.toml` configures Netlify to find it.
+
 Main files:
 - dist/index.html — page content, styling, and interactions
 - dist/assets/mdm-logo.png — MDM Creation logo
