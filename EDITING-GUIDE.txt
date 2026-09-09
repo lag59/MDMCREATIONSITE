@@ -21,6 +21,7 @@ Service pages:
 - dist/services/merchandise.html — Custom Merchandise
 - dist/services/marketing.html — Marketing Design
 - dist/services/support.html — Business Support
+- dist/services/social.html — Social Media
 - dist/services/service.css and service.js are shared by all service pages.
 
 Automatic project gallery:
