@@ -2,7 +2,7 @@ MDM CREATION WEBSITE — EDITING GUIDE
 
 1. Open the "dist" folder in Visual Studio Code.
 2. Open "index.html" to edit the website.
-3. Text, prices, links, colors, layout, and bilingual content are all contained in index.html.
+3. Text, starting prices, links, colors, layout, and bilingual content are all contained in index.html.
 4. Replace images inside "dist/assets" while keeping the same filenames, or update the image filenames in index.html.
 5. Double-click index.html to preview the website in your browser.
 6. To publish on Netlify, upload the complete "dist" folder.
@@ -23,7 +23,8 @@ Service pages:
 - dist/services/support.html — Business Support
 - dist/services/social.html — Social Media
 - dist/services/service.css and service.js are shared by all service pages.
-- dist/price-list.html — complete bilingual service price list from the official PDF.
+- dist/service-list.html — complete bilingual list of services from the official flyer; prices are intentionally not displayed.
+- Only the approved starting rates and bundle prices shown on the homepage are public.
 
 Automatic project gallery:
 - The homepage loads approved MDM TapCard AutoGallery photos in the "Our Projects" section.
