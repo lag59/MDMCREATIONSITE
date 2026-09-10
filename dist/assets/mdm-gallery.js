@@ -51,14 +51,14 @@
     return;
   }
 
-  fetch('/.netlify/functions/mdm-gallery?limit=12')
+  fetch('gallery-data.json', { cache: 'no-store' })
     .then(async (response) => {
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(payload.error || 'Gallery request failed');
+      const payload = await response.json().catch(() => []);
+      if (!response.ok) throw new Error('Gallery data request failed');
       return payload;
     })
     .then((payload) => {
-      const items = findItems(payload);
+      const items = Array.isArray(payload) ? payload : findItems(payload);
       if (!items.length) {
         renderItems(fallbackItems);
         return;

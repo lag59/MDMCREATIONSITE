@@ -1,50 +1,20 @@
-const API_URL = process.env.MDM_API_URL || 'https://mdm-tapcard-api.fly.dev';
+const fallbackGallery = [
+  { image_url: 'assets/branding-flat-lay.png', title: 'Luxury Branding Flat Lay', source_url: '/gallery.html' },
+  { image_url: 'assets/branding.png', title: 'Branding & Design', source_url: '/gallery.html' },
+  { image_url: 'assets/web-design-workspace.png', title: 'Web Design Workspace', source_url: '/gallery.html' },
+  { image_url: 'assets/social-media-planning.png', title: 'Social Media Planning', source_url: '/gallery.html' },
+  { image_url: 'assets/nfc-business-collection.png', title: 'NFC Business Cards', source_url: '/gallery.html' },
+  { image_url: 'assets/business-support-management.png', title: 'Business Support', source_url: '/gallery.html' },
+  { image_url: 'assets/mdm-process.png', title: 'MDM Process', source_url: '/gallery.html' }
+];
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'GET') {
     return response(405, { error: 'Method not allowed' });
   }
 
-  const slug = process.env.MDM_BUSINESS_SLUG;
-  const apiKey = process.env.MDM_API_KEY;
-
-  if (!slug || !apiKey) {
-    return response(500, { error: 'Gallery is not configured.' });
-  }
-
-  const params = new URLSearchParams(event.queryStringParameters || {});
-  const limit = Math.min(Math.max(Number(params.get('limit') || 12), 1), 60);
-  params.set('limit', String(limit));
-  params.delete('business_slug');
-
-  const endpoint = `${API_URL.replace(/\/$/, '')}/api/v1/businesses/${encodeURIComponent(slug)}/gallery?${params}`;
-
-  try {
-    const upstream = await fetch(endpoint, {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'X-API-Key': apiKey,
-        Accept: 'application/json'
-      }
-    });
-    const text = await upstream.text();
-    let data;
-
-    try {
-      data = JSON.parse(text);
-    } catch {
-      data = { error: 'The gallery API returned an invalid response.' };
-    }
-
-    if (!upstream.ok) {
-      return response(upstream.status, { error: 'The MDM TapCard gallery could not be loaded.' }, true);
-    }
-
-    return response(200, data);
-  } catch (error) {
-    console.error('MDM gallery request failed:', error);
-    return response(502, { error: 'Unable to load the gallery right now.' });
-  }
+  // Keep the Netlify function available for future API-backed integration, but fall back to the local gallery data by default.
+  return response(200, { items: fallbackGallery, source: 'local-fallback' });
 };
 
 function response(statusCode, body, isError = false) {
