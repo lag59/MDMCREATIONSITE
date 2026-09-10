@@ -19,15 +19,15 @@
   };
 
   const renderItems = (items) => {
-    const validItems = items.filter((item) => item && getImageUrl(item));
+    const validItems = items.filter((item) => item && isSafeImageUrl(getImageUrl(item)));
     if (!validItems.length) {
       showStatus('New approved projects will appear here soon.');
       return;
     }
     status.hidden = true;
     validItems.slice(0, 12).forEach((item) => {
-      const imageUrl = getImageUrl(item);
-      const sourceUrl = item.source_url || item.sourceUrl || item.permalink || imageUrl;
+      const imageUrl = sanitizeImageUrl(getImageUrl(item));
+      const sourceUrl = sanitizeUrl(item.source_url || item.sourceUrl || item.permalink || imageUrl);
       const title = item.caption || item.title || item.category || 'MDM Creation project';
       const figure = document.createElement('figure');
       figure.className = 'gallery-item';
@@ -89,6 +89,31 @@
 
   function getImageUrl(item) {
     return item.image_url || item.imageUrl || item.media_url || item.mediaUrl || item.thumbnail_url || item.thumbnailUrl || item.image?.url || item.media?.url || item.url;
+  }
+
+  function sanitizeImageUrl(value) {
+    const url = sanitizeUrl(value);
+    if (!url) return null;
+    try {
+      const parsed = new URL(url, window.location.origin);
+      if (parsed.protocol === 'http:' || parsed.protocol === 'https:') return parsed.href;
+    } catch {
+      return null;
+    }
+    return null;
+  }
+
+  function sanitizeUrl(value) {
+    if (!value || typeof value !== 'string') return null;
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+    const lower = trimmed.toLowerCase();
+    if (lower.startsWith('javascript:') || lower.startsWith('data:') || lower.startsWith('blob:')) return null;
+    return trimmed;
+  }
+
+  function isSafeImageUrl(value) {
+    return Boolean(sanitizeImageUrl(value));
   }
 
   function escapeHtml(value) { return String(value).replace(/[&<>"']/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char])); }
