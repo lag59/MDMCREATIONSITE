@@ -3,16 +3,6 @@
   const status = document.querySelector('[data-gallery-status]');
   if (!grid || !status) return;
 
-  const fallbackItems = [
-    { image_url: 'assets/branding-flat-lay.png', title: 'Luxury Branding Flat Lay' },
-    { image_url: 'assets/branding.png', title: 'Branding & Design' },
-    { image_url: 'assets/web-design-workspace.png', title: 'Web Design Workspace' },
-    { image_url: 'assets/social-media-planning.png', title: 'Social Media Planning' },
-    { image_url: 'assets/nfc-business-collection.png', title: 'NFC Business Cards' },
-    { image_url: 'assets/business-support-management.png', title: 'Business Support' },
-    { image_url: 'assets/mdm-process.png', title: 'MDM Process' }
-  ];
-
   const showStatus = (message) => {
     status.textContent = message;
     status.hidden = false;
@@ -46,28 +36,18 @@
     });
   };
 
-  if (location.protocol === 'file:') {
-    renderItems(fallbackItems);
-    return;
-  }
-
-  fetch('gallery-data.json', { cache: 'no-store' })
+  fetch('/.netlify/functions/mdm-gallery?limit=12')
     .then(async (response) => {
-      const payload = await response.json().catch(() => []);
-      if (!response.ok) throw new Error('Gallery data request failed');
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.error || 'Gallery request failed');
       return payload;
     })
     .then((payload) => {
-      const items = Array.isArray(payload) ? payload : findItems(payload);
-      if (!items.length) {
-        renderItems(fallbackItems);
-        return;
-      }
-      renderItems(items);
+      renderItems(findItems(payload));
     })
     .catch((error) => {
-      console.warn('MDM project gallery fallback engaged:', error);
-      renderItems(fallbackItems);
+      console.error('MDM project gallery:', error);
+      showStatus('The approved project gallery is not available yet. Please check the MDM TapCard connection.');
     });
 
   function findItems(payload) {
