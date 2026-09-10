@@ -4,13 +4,13 @@
   if (!grid || !status) return;
 
   const fallbackItems = [
-    { image_url: 'assets/MDM Creation luxury branding flat lay.png', title: 'Luxury Branding Flat Lay' },
-    { image_url: 'assets/BRANDING.png', title: 'Branding & Design' },
-    { image_url: 'assets/Elegant Multi-Device Web Design Workspace.png', title: 'Web Design Workspace' },
-    { image_url: 'assets/Luxury Social Media Planning Workspace.png', title: 'Social Media Planning' },
-    { image_url: 'assets/Luxury NFC business collection with digital profile.png', title: 'NFC Business Cards' },
-    { image_url: 'assets/bussiness support Management.png', title: 'Business Support' },
-    { image_url: 'assets/MDMPROCESS.png', title: 'MDM Process' }
+    { image_url: 'assets/branding-flat-lay.png', title: 'Luxury Branding Flat Lay' },
+    { image_url: 'assets/branding.png', title: 'Branding & Design' },
+    { image_url: 'assets/web-design-workspace.png', title: 'Web Design Workspace' },
+    { image_url: 'assets/social-media-planning.png', title: 'Social Media Planning' },
+    { image_url: 'assets/nfc-business-collection.png', title: 'NFC Business Cards' },
+    { image_url: 'assets/business-support-management.png', title: 'Business Support' },
+    { image_url: 'assets/mdm-process.png', title: 'MDM Process' }
   ];
 
   const showStatus = (message) => {
